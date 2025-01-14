@@ -49,9 +49,7 @@ class HelloWorld(toga.App):
     ###################################################################
 
     def select_view_input_handler(self, widget):
-        selection_value = self.select_view_input.value.name
-        print(selection_value)
-        self.routine_table.data = self.get_routine_data()
+        self.load_routine()
 
     def clear_all_handler(self, widget):
         query = "DELETE FROM routines"
