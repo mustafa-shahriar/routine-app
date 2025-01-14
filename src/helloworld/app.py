@@ -139,7 +139,6 @@ class HelloWorld(toga.App):
         ]
         return result
 
-
     def clear_all(self, widget):
         query = "DELETE FROM routines"
         self.cursor.execute(query)
@@ -164,6 +163,7 @@ class HelloWorld(toga.App):
         if not self.is_valid_time(value["day"], value["start"], value["end"]):
             self.main_window.info_dialog("Error!","An entry already exists for that time range.")
             return
+        if value["subject"] == "": self.main_window.info_dianlog("Error!", "Subject can't be empty")
 
         self.insert_into_db(value) 
         self.clear_input()
@@ -212,7 +212,6 @@ class HelloWorld(toga.App):
         self.cursor.execute(query, (day, id, start, start, end, end))
         return len([r for r in self.cursor.fetchall()]) == 0
 
-
     def is_valid_time(self, day, start, end):
         query = """
             SELECT * FROM routines
@@ -226,12 +225,9 @@ class HelloWorld(toga.App):
         self.cursor.execute(query, (day, start, start, end, end))
         return len([r for r in self.cursor.fetchall()]) == 0
 
-    # def serialize_input_for_db(self, entry):
-    #     return {"subject": entry["subject"], "day": entry["day"], "start": entry["start"].isoformat, "end": entry["end"].isoformat}
-
     def get_input(self):
         return {
-            "subject": self.subject_input.value,
+            "subject": self.subject_input.value.strip(),
             "day": self.day_input.value,
             "start": self.start_time_input.value,
             "end": self.end_time_input.value
@@ -239,7 +235,6 @@ class HelloWorld(toga.App):
 
     def clear_input(self):
         self.subject_input.value = ""
-
 
     def on_double_click_handler(self, widget, row):
         subject_input = toga.TextInput(value=row.subject, style=Pack(flex=1))
@@ -279,7 +274,12 @@ class HelloWorld(toga.App):
                 self.main_window.info_dialog("Error", "An entry already exists for that time range.")
                 return
 
+            if updated_entry["subject"] == "": self.main_window.info_dianlog("Error!", "Subject can't be empty")
+
             self.update_entry_in_db(updated_entry)
+
+            updated_entry["start"] = str(updated_entry["start"][:5])
+            updated_entry["end"] = str(updated_entry["end"][:5])
             for i, entry in enumerate(self.routine_table.data):
                 if entry.id == row.id:
                     self.routine_table.data[i] = updated_entry
