@@ -6,7 +6,7 @@ import toga
 import calendar
 from datetime import datetime, time
 from .ui import init_edit_ui, init_main_ui
-from .db import init_db, insert_into_db, is_valid_time
+from .db import init_db, insert_into_db, is_valid_time, get_all_entry
 
 class HelloWorld(toga.App):
     def startup(self):
@@ -24,19 +24,10 @@ class HelloWorld(toga.App):
 
     def get_routine_data(self):
         data = [
-            {**entry, "time": entry["start"] + "-" + entry["end"]} for entry in self.get_all_entry()
+            {**entry, "time": entry["start"] + "-" + entry["end"]} for entry in get_all_entry(self)
             if self.select_view_input.value.name == "All" or entry["day"] == self.select_view_input.value.name
         ]
         return data
-
-    def get_all_entry(self):
-        query = "SELECT * FROM routines"
-        self.cursor.execute(query)
-        result = [
-            {"id": row[0], "subject": row[1], "day": row[2], "start": str(row[3][:5]), "end": str(row[4][:5]) }
-            for row in self.cursor.fetchall()
-        ]
-        return result
 
     def get_input(self):
         return {

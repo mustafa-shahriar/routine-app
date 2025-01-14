@@ -17,6 +17,15 @@ def init_db(app):
     ''')
     app.conn.commit()
 
+def get_all_entry(app):
+    query = "SELECT * FROM routines"
+    app.cursor.execute(query)
+    result = [
+        {"id": row[0], "subject": row[1], "day": row[2], "start": str(row[3][:5]), "end": str(row[4][:5]) }
+        for row in app.cursor.fetchall()
+    ]
+    return result
+
 def insert_into_db(self, entry):
     query = '''
         INSERT INTO routines (subject, day, start, end)
