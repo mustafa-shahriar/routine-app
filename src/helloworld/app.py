@@ -146,9 +146,9 @@ class HelloWorld(toga.App):
 
     def on_double_click_handler(self, widget, row):
         self.edit_subject_input.value = row.subject
-        self.edit_day_input = row.day
-        self.edit_start_time_input = time.fromisoformat(row.start)
-        self.edit_end_time_input = time.fromisoformat(row.end)
+        self.edit_day_input.value = row.day
+        self.edit_start_time_input.value = time.fromisoformat(row.start)
+        self.edit_end_time_input.value = time.fromisoformat(row.end)
         self.edit_row = row
         self.main_window.content = self.edit_ui
 
