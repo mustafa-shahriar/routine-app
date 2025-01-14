@@ -3,6 +3,7 @@ import calendar
 from datetime import time
 from toga.style import Pack
 from toga.style.pack import COLUMN, ROW, CENTER
+from .db import update_entry_in_db, delete_entry_from_db, is_valid_time_with_id
 
 def init_main_ui(toga_app):
     # Input Form
@@ -38,7 +39,7 @@ def init_main_ui(toga_app):
         style = Pack(direction=ROW, flex=1, alignment=CENTER)
     )
 
-    add_button = toga.Button("Add", on_press=toga_app.add_entry)
+    add_button = toga.Button("Add", on_press=toga_app.add_entry_handler)
     input_box = toga.Box(
         children = [
             toga_app.subject_input,
@@ -82,8 +83,8 @@ def init_main_ui(toga_app):
     )
 
     # Extra Buttons
-    view_todays_routine_button = toga.Button("View Today's routine", style=Pack(padding=5), on_press=toga_app.view_todays_routine)
-    clear_all_button = toga.Button("Clear All", style=Pack(padding=5), on_press=toga_app.clear_all)
+    view_todays_routine_button = toga.Button("View Today's routine", style=Pack(padding=5), on_press=toga_app.view_todays_routine_handler)
+    clear_all_button = toga.Button("Clear All", style=Pack(padding=5), on_press=toga_app.clear_all_handler)
     extra_buttons_box = toga.Box(
         children = [
             view_todays_routine_button,
@@ -136,13 +137,13 @@ def init_edit_ui(toga_app):
                 toga_app.main_window.info_dialog("Error", "Start time must be earlier than end time.")
                 return
 
-        if not toga_app.is_valid_time_with_id(updated_entry["day"], updated_entry["start"], updated_entry["end"], updated_entry["id"]):
+        if not is_valid_time_with_id(toga_app, updated_entry["day"], updated_entry["start"], updated_entry["end"], updated_entry["id"]):
             toga_app.main_window.info_dialog("Error", "An entry already exists for that time range.")
             return
 
         if updated_entry["subject"] == "": toga_app.main_window.info_dialog("Error!", "Subject can't be empty")
 
-        toga_app.update_entry_in_db(updated_entry)
+        update_entry_in_db(toga_app, updated_entry)
 
         updated_entry["start"] = str(updated_entry["start"][:5])
         updated_entry["end"] = str(updated_entry["end"][:5])
@@ -154,7 +155,7 @@ def init_edit_ui(toga_app):
         toga_app.set_main_ui()
 
     def on_delete_button_press(widget):
-        toga_app.delete_entry_from_db(toga_app.edit_row.id)
+        delete_entry_from_db(toga_app, toga_app.edit_row.id)
         toga_app.routine_table.data = [entry for entry in toga_app.routine_table.data if entry.id != toga_app.edit_row.id]
         toga_app.main_window.info_dialog("Deleted", "Routine deleted successfully")
         toga_app.set_main_ui()
