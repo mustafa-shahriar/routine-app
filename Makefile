@@ -7,4 +7,4 @@ build: clean
 	briefcase build android
 
 run: build
-	briefcase run android -d 346911ae
+	briefcase run android
