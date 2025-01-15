@@ -75,7 +75,9 @@ class HelloWorld(toga.App):
         if not is_valid_time(self, value["day"], value["start"], value["end"]):
             self.main_window.info_dialog("Error!","An entry already exists for that time range.")
             return
-        if value["subject"] == "": self.main_window.info_dialog("Error!", "Subject can't be empty")
+        if value["subject"] == "":
+            self.main_window.info_dialog("Error!", "Subject can't be empty")
+            return
 
         insert_into_db(self, value) 
         self.clear_input()

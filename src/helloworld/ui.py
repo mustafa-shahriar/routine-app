@@ -141,7 +141,9 @@ def init_edit_ui(app):
             app.main_window.info_dialog("Error", "An entry already exists for that time range.")
             return
 
-        if updated_entry["subject"] == "": app.main_window.info_dialog("Error!", "Subject can't be empty")
+        if updated_entry["subject"] == "":
+            app.main_window.info_dialog("Error!", "Subject can't be empty")
+            return
 
         update_entry_in_db(app, updated_entry)
 
